@@ -15,8 +15,8 @@ import time
 
 
 #Accound details for user email
-email = "pyteser@gmail.com"
-password = "N15IEYwqEwI7"
+email = "YOUR_EMAIL_HERE"
+password = "YOUR_PASSWORD_HERE"
 port = 465
 
 #ttl = time to live, how long the program will run for in seconds(24hrs)
